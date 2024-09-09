@@ -1,0 +1,40 @@
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Block {
+    id           String        @id
+    height       Int           @unique
+    transactions Transaction[]
+    createdAt    DateTime      @default(now())
+}
+
+model Transaction {
+    id        String   @id @default(cuid())
+    block     Block    @relation(fields: [blockId], references: [id])
+    blockId   String
+    inputs    Input[]
+    outputs   Output[]
+    createdAt DateTime @default(now())
+}
+
+model Input {
+    id            String      @id @default(cuid())
+    txId          String
+    index         Int
+    transaction   Transaction @relation(fields: [transactionId], references: [id])
+    transactionId String
+}
+
+model Output {
+    id            String      @id @default(cuid())
+    address       String
+    value         Float
+    transaction   Transaction @relation(fields: [transactionId], references: [id])
+    transactionId String
+}

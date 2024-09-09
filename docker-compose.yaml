@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -11,6 +11,8 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - app-network
 
   api:
     build: .
@@ -20,6 +22,12 @@ services:
       DATABASE_URL: postgres://myuser:mypassword@db:5432/mydatabase
     ports:
       - "3000:3000"
+    networks:
+      - app-network
 
 volumes:
   db_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Blockchain Indexer API
+  version: 1.0.0
+  description: API for processing blocks, getting balances, and rolling back the blockchain state.
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /:
+    get:
+      summary: Check API status
+      responses:
+        "200":
+          description: API is ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Block processor ready
+
+  /blocks:
+    post:
+      summary: Process a new block
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Block"
+      responses:
+        "201":
+          description: Block processed successfully
+        "400":
+          description: Invalid block data
+
+  /balance/{address}:
+    get:
+      summary: Get balance for an address
+      parameters:
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Balance retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: number
+        "404":
+          description: Address not found
+
+  /rollback:
+    post:
+      summary: Rollback blockchain state to a specific height
+      parameters:
+        - name: height
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rollback successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Invalid height or rollback not possible
+
+components:
+  schemas:
+    Output:
+      type: object
+      properties:
+        address:
+          type: string
+        value:
+          type: number
+
+    Input:
+      type: object
+      properties:
+        txId:
+          type: string
+        index:
+          type: number
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+        inputs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Input"
+        outputs:
+          type: array
+          items:
+            $ref: "#/components/schemas/Output"
+
+    Block:
+      type: object
+      properties:
+        id:
+          type: string
+        height:
+          type: number
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Transaction"

@@ -1,16 +1,20 @@
-# Use an official Node.js runtime as a parent image
+# Use the official Bun image as the base
 FROM oven/bun:1
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the rest of the application code
+# Copy the application code into the container
 COPY . .
 
+# Install dependencies
 RUN bun install
 
-# Expose the port the app runs on
+# Set environment variables
+ENV DATABASE_URL=postgres://myuser:mypassword@db:5432/mydatabase
+
+# Expose the app's port
 EXPOSE 3000
 
-# Define the command to run the app
-ENTRYPOINT bun start
+# Start the application with Prisma migrations
+CMD ["sh", "-c", "bun run prisma db push --force-reset && bun start"]

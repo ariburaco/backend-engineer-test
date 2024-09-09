@@ -3,18 +3,28 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "dev:fresh": "bun db:push:force && bun dev",
     "start": "bun src/index.ts",
-    "run-docker": "docker-compose up -d --build"
+    "run-docker": "docker-compose up -d --build",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push",
+    "db:push:force": "prisma db push --force-reset",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/pg": "^8.11.8"
+    "prisma": "^5.19.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@prisma/client": "^5.19.1",
     "fastify": "^4.28.1",
-    "pg": "^8.12.0"
+    "zod": "^3.23.8"
   }
 }
